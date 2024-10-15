@@ -14,27 +14,74 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
 class ProductoController {
+
+    // Obtener todos los productos
     list(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const productos = yield database_1.default.query('SELECT * FROM producto');
-            res.json(productos);
+            try {
+                const productos = yield database_1.default.query('SELECT * FROM producto');
+                res.json(productos);
+            } catch (err) {
+                res.status(500).json({ message: 'Error fetching products', error: err });
+            }
         });
     }
+
+    // Obtener un producto por ID
     getOne(req, res) {
-        res.json({ text: 'This is the game' + req.params.id });
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const producto = yield database_1.default.query('SELECT * FROM producto WHERE id_producto = ?', [id]);
+                if (producto.length > 0) {
+                    res.json(producto[0]);
+                } else {
+                    res.status(404).json({ message: 'Product not found' });
+                }
+            } catch (err) {
+                res.status(500).json({ message: 'Error fetching product', error: err });
+            }
+        });
     }
+
+    // Crear un nuevo producto
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield database_1.default.query('INSERT INTO producto set ?', [req.body]);
-            res.json({ messsage: 'Product saved' });
+            try {
+                yield database_1.default.query('INSERT INTO producto SET ?', [req.body]);
+                res.json({ message: 'Product saved' });
+            } catch (err) {
+                res.status(500).json({ message: 'Error creating product', error: err });
+            }
         });
     }
+
+    // Actualizar un producto existente
     update(req, res) {
-        res.json({ text: 'updating a product' + req.params.id });
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                yield database_1.default.query('UPDATE producto SET ? WHERE id_producto = ?', [req.body, id]);
+                res.json({ message: 'Product updated' });
+            } catch (err) {
+                res.status(500).json({ message: 'Error updating product', error: err });
+            }
+        });
     }
-    deleate(req, res) {
-        res.json({ text: 'deleating a product' + req.params.id });
+
+    // Eliminar un producto
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                yield database_1.default.query('DELETE FROM producto WHERE id_producto = ?', [id]);
+                res.json({ message: 'Product deleted' });
+            } catch (err) {
+                res.status(500).json({ message: 'Error deleting product', error: err });
+            }
+        });
     }
 }
+
 const productoController = new ProductoController();
 exports.default = productoController;
