@@ -59,10 +59,20 @@ class ProductoController {
     }
     
     
-    
-    deleate(req, res) {
-        res.json({ text: 'deleating a product' + req.params.id });
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+
+                yield database_1.default.query('DELETE FROM producto WHERE id_producto = ?', [id]);
+                res.json({ message: 'Product deleted' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ message: 'Error deleting product' });
+            }
+        });
     }
+
 }
 const productoController = new ProductoController();
 exports.default = productoController;
