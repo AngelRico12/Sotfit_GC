@@ -1,0 +1,52 @@
+<div class="container">
+    <h2>{{ editMode ? 'Editar Categoría' : 'Añadir Nueva Categoría' }}</h2>
+  
+    <!-- Formulario para insertar o actualizar una categoría -->
+    <form (ngSubmit)="editMode ? updateCategoria() : saveNewCategoria()" #categoriaForm="ngForm">
+      
+      <!-- Campo para el nombre de la categoría -->
+      <div class="form-group">
+        <label for="nombreCategoria">Nombre de la Categoría:</label>
+        <input
+          type="text"
+          id="nombreCategoria"
+          class="form-control"
+          name="nombreCategoria"
+          required
+          [(ngModel)]="categoria.nombre_categoria"
+          placeholder="Escribe el nombre de la categoría"
+        />
+      </div>
+  
+      <!-- Botón para enviar el formulario -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!categoriaForm.form.valid">
+        {{ editMode ? 'Actualizar Categoría' : 'Guardar Categoría' }}
+      </button>
+  
+      <!-- Botón para cancelar la edición -->
+      <button
+        type="button"
+        class="btn btn-secondary ml-2"
+        *ngIf="editMode"
+        (click)="cancelEdit()">
+        Cancelar
+      </button>
+    </form>
+  
+    <hr>
+  
+    <!-- Lista de categorías ya existentes -->
+    <h3>Categorías Existentes</h3>
+    <ul class="list-group">
+      <li *ngFor="let cat of categorias" class="list-group-item">
+        {{ cat.nombre_categoria }}
+        <!-- Botones para editar o eliminar la categoría -->
+        <button class="btn btn-sm btn-warning float-right" (click)="editCategoria(cat)">Editar</button>
+        <button class="btn btn-sm btn-danger float-right mr-2" (click)="deleteCategoria(cat.id_categoria)">Eliminar</button>
+      </li>
+    </ul>
+  </div>
+  

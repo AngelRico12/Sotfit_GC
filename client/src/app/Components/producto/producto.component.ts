@@ -1,6 +1,7 @@
 // producto.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ProductoService } from '../../Services/producto.service';
+import { CategoriaProductoService } from 'src/app/Services/categoriaProducto/categoria-producto.service';
 
 @Component({
   selector: 'app-producto',
@@ -12,18 +13,30 @@ export class ProductoComponent implements OnInit {
   producto: any = {
     nombre: '',
     descripcion: '',
-    categoria: '',
+    id_categoria: null,
     precio: 0,
-    estado: 'disponible'  // Valor por defecto
+    estado: 'disponible',
+    qr: ''  // Nuevo campo
   };
 
   productos: any = [];
+categorias: any = [];
 
-  constructor(private productoService: ProductoService) { }
+  constructor(private productoService: ProductoService,private categoriaProductoService: CategoriaProductoService) { }
+
 
   ngOnInit(): void {
     this.listProducts();
+    this.listCategorias();  // Nueva función para cargar las categorías
   }
+
+  // Función para cargar categorías
+listCategorias() {
+  this.categoriaProductoService.getCategorias().subscribe(
+    res => this.categorias = res,
+    err => console.error(err)
+  );
+}
 
   // Obtener lista de productos
   listProducts() {

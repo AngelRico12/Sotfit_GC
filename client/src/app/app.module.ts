@@ -8,11 +8,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ProductoComponent } from './Components/producto/producto.component';
 import { ProductoService } from '../app/Services/producto.service';
+import { CategoriaProductoComponent } from './Components/categoriaProducto/categoria-producto/categoria-producto.component';
+import { CategoriaProductoService } from './Services/categoriaProducto/categoria-producto.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProductoComponent
+    ProductoComponent,
+    CategoriaProductoComponent
   ],
   imports: [
     BrowserModule,
@@ -20,7 +23,7 @@ import { ProductoService } from '../app/Services/producto.service';
     FormsModule,
     HttpClientModule
   ],
-  providers: [ProductoService],
+  providers: [ProductoService, CategoriaProductoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
