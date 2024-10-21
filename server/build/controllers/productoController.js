@@ -44,7 +44,11 @@ class ProductoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const updatedProduct = req.body;
+                const { nombre, descripcion, id_categoria, precio, estado, qr } = req.body; // Asegúrate de que solo sean campos válidos de la tabla producto
+    
+                // Actualiza solo los campos de producto
+                const updatedProduct = { nombre, descripcion, id_categoria, precio, estado, qr };
+    
                 yield database_1.default.query('UPDATE producto SET ? WHERE id_producto = ?', [updatedProduct, id]);
                 res.json({ message: 'Product updated' });
             } catch (error) {
@@ -53,6 +57,7 @@ class ProductoController {
             }
         });
     }
+    
     
     
     deleate(req, res) {
