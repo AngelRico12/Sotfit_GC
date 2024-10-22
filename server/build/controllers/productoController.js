@@ -31,14 +31,18 @@ class ProductoController {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield database_1.default.query('INSERT INTO producto SET ?', [req.body]);
+                console.log('Datos recibidos en el POST:', req.body); // Esto imprime los datos recibidos
+                const { nombre, descripcion, id_categoria, precio, estado, qr } = req.body;
+                const newProduct = { nombre, descripcion, id_categoria, precio, estado, qr };
+                yield database_1.default.query('INSERT INTO producto SET ?', [newProduct]);
                 res.json({ message: 'Product saved' });
             } catch (error) {
-                console.error(error);
+                console.error(error); // Esto imprimirá errores si algo falla
                 res.status(500).json({ message: 'Error saving product' });
             }
         });
     }
+    
     
     update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
