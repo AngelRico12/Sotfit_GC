@@ -13,56 +13,71 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
-
-class CategoriaProductoController {
-    // Listar todas las categorías
+class ProductoController {
     list(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const categorias = yield database_1.default.query('SELECT * FROM categoria_producto');
-            res.json(categorias);
+            const productos = yield database_1.default.query(`
+                SELECT p.*, c.nombre_categoria
+                FROM producto p
+                JOIN categoria_producto c ON p.id_categoria = c.id_categoria
+            `);
+            res.json(productos);
         });
     }
-
-    // Obtener una categoría por ID
+    
     getOne(req, res) {
+        res.json({ text: 'This is the game' + req.params.id });
+    }
+    create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const categoria = yield database_1.default.query('SELECT * FROM categoria_producto WHERE id_categoria = ?', [id]);
-            if (categoria.length > 0) {
-                res.json(categoria[0]);
-            } else {
-                res.status(404).json({ message: 'Category not found' });
+            try {
+                console.log('Datos recibidos en el POST:', req.body); // Esto imprime los datos recibidos
+                const { nombre, descripcion, id_categoria, precio, estado, qr } = req.body;
+                const newProduct = { nombre, descripcion, id_categoria, precio, estado, qr };
+                yield database_1.default.query('INSERT INTO producto SET ?', [newProduct]);
+                res.json({ message: 'Product saved' });
+            } catch (error) {
+                console.error(error); // Esto imprimirá errores si algo falla
+                res.status(500).json({ message: 'Error saving product' });
+            }
+        });
+    }
+    
+    
+    update(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const { nombre, descripcion, id_categoria, precio, estado, qr } = req.body; // Asegúrate de que solo sean campos válidos de la tabla producto
+    
+                // Actualiza solo los campos de producto
+                const updatedProduct = { nombre, descripcion, id_categoria, precio, estado, qr };
+    
+                yield database_1.default.query('UPDATE producto SET ? WHERE id_producto = ?', [updatedProduct, id]);
+                res.json({ message: 'Product updated' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ message: 'Error updating product' });
+            }
+        });
+    }
+    
+    
+    
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+
+                yield database_1.default.query('DELETE FROM producto WHERE id_producto = ?', [id]);
+                res.json({ message: 'Product deleted' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ message: 'Error deleting product' });
             }
         });
     }
 
-    // Crear una nueva categoría
-    create(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield database_1.default.query('INSERT INTO categoria_producto set ?', [req.body]);
-            res.json({ message: 'Category saved' });
-        });
-    }
-
-    // Actualizar una categoría existente
-    update(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const updatedCategoria = req.body;
-            yield database_1.default.query('UPDATE categoria_producto SET ? WHERE id_categoria = ?', [updatedCategoria, id]);
-            res.json({ message: 'Category updated' });
-        });
-    }
-
-    // Eliminar una categoría por ID
-    delete(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            yield database_1.default.query('DELETE FROM categoria_producto WHERE id_categoria = ?', [id]);
-            res.json({ message: 'Category deleted' });
-        });
-    }
 }
-
-const categoriaProductoController = new CategoriaProductoController();
-exports.default = categoriaProductoController;
+const productoController = new ProductoController();
+exports.default = productoController;
